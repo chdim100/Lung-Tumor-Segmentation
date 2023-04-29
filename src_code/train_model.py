@@ -36,12 +36,8 @@ print(f'There are {len(train_dataset)} train images and {len(val_dataset)} val i
 ######## create a list containing only the class labels
 target_list = []
 for _, label in tqdm(train_dataset):
-    # Check if mask contains a tumorous pixel:
-    if np.any(label):
-        target_list.append(1)
-    else:
-        target_list.append(0)
-
+    # Check if mask contains a tumorous pixel, append 0 for non-tumorous, 1 for tumorous:
+    target_list.append(np.any(label).astype(np.int8))
 uniques = np.unique(target_list, return_counts=True)
 non_tumorousdivtum=uniques[1][0]/uniques[1][1]
 print('clear/tumorous data fraction:',np.round(non_tumorousdivtum,3))
