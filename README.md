@@ -10,5 +10,5 @@ Raw data contains 3D Computed Tomography (CT) structures from 96 patients for th
 Link to the article resource https://www.nature.com/articles/s41467-022-30695-9 
 Antonelli, Michela, et al. "The medical segmentation decathlon." Nature communications 13.1 (2022): 4128.
 
-This code has been developed for a capstone project as a part of the Udemy course "Deep Learning with PyTorch for Medical Image Analysis". 
+The code and the outputs included, have been developed for a capstone project as a part of the Udemy course "Deep Learning with PyTorch for Medical Image Analysis". 
 
