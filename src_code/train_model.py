@@ -15,6 +15,15 @@ from IPython.display import HTML
 from Dataset import LungDataset
 from model import Unet
 
+##### CASE Dataset module is not detected when batches are extracted--(Possible BUG)---
+#####-We fix it by running the following code:
+"""
+import sys
+projectpath=----Directory_to_code_files----
+sys.path.insert(0,projectpath)
+"""
+#####
+
 ######## Dataset Creation #############
 ######## Creating the train and val dataset and the augmentation pipeline
 seq=iaa.Sequential([iaa.Affine(scale=(0.85,1.15),
