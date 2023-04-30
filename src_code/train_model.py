@@ -102,7 +102,9 @@ class LungDetector(pl.LightningModule):
         self.loss_fn=torch.nn.BCEWithLogitsLoss()
         
     def forward(self,data):
-        return torch.sigmoid(self.model(data))
+      ### including the sigmoid activation function here causes training instability due to saturation close to 1
+      ### the sigmoid activation function is evaluated at the evaluation stage, out of this particular class
+        return self.model(data)
     
     def training_step(self, batch, batch_idx):
         ct, mask= batch
@@ -183,7 +185,7 @@ labels=[]
 for slic, label in tqdm(val_dataset):
   slic=torch.tensor(slic).to(device).unsqueeze(0)
   with torch.no_grad():
-    pred=model(slic)
+    pred=torch.nn.sigmoid(model(slic))
   preds.append(pred.cpu().numpy())
   labels.append(label)
 preds=np.array(preds)
@@ -211,7 +213,7 @@ for i in range(subject_ct.shape[-1]):
     slic = subject_ct[:,:,i]
     slic_res=cv2.resize(slic,(256,256))
     with torch.no_grad():
-        pred = model(torch.tensor(slic_res).unsqueeze(0).unsqueeze(0).float().to(device))[0][0]
+        pred = torch.nn.sigmoid(model(torch.tensor(slic_res).unsqueeze(0).unsqueeze(0).float().to(device)))[0][0]
         pred = pred > 0.5
     preds.append(pred.cpu())
 
