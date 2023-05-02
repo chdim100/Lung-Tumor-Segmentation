@@ -128,9 +128,9 @@ class LungDetector(pl.LightningModule):
         mask=mask.float()
         pred=self(ct.float())
         loss=self.loss_fn(pred,mask)
-        print('Validation loss:',loss)
         self.log('Val Dice', loss)
         if batch_idx%2==0:
+            print('validation loss:',loss)
             self.log_images(ct.cpu(), pred.cpu(), mask.cpu(), 'Val')
         return loss
     
