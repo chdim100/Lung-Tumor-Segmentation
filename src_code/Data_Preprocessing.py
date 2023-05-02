@@ -9,6 +9,8 @@ from celluloid import Camera
 from IPython.display import HTML
 import imgaug.augmenters as iaa
 
+##### download: https://drive.google.com/drive/folders/1HqEgzS8BV2c7xYNrZdEAnrHk7osJJ--2
+##### needs 8.6GB + >=7.6GB for the processed files
 #############Inspection#######################
 ########## Task: Define the paths to images and labels
 path2files='Task06_Lung/'
