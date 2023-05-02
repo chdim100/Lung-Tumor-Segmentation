@@ -31,7 +31,7 @@ sample_path_label=change_img_to_label_path(sample_path)
 ##### check existence of sample files
 print(sample_path)
 print(sample_path_label)
-#####
+######
 
 ##### load NIftI (sample)
 data=nib.load(sample_path)
