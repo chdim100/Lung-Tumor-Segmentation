@@ -43,13 +43,10 @@ print(f'There are {len(train_dataset)} train images and {len(val_dataset)} val i
 ######## for sufficient training, we need to take sample slices which contain a tumor more often
 ######## WeightedRandomSampler will be used here
 ######## create a list containing only the class labels
-target_list = []
-for _, label in tqdm(train_dataset):
-    # Check if mask contains a tumorous pixel, append 0 for non-tumorous, 1 for tumorous:
-    target_list.append(np.any(label).astype(np.int8))
-uniques = np.unique(target_list, return_counts=True)
-non_tumorousdivtum=uniques[1][0]/uniques[1][1]
-print('clear/tumorous data fraction:',np.round(non_tumorousdivtum,3))
+target_list = [np.any(label).astype(np.int8) for _, label in tqdm(train_dataset)]
+target_list = np.array(target_list)
+non_tumorousdivtum = np.round((1 - target_list.mean()) / target_list.mean(), 3)
+print('clear/tumorous data fraction:', non_tumorousdivtum)
 
 #### create a weight list, to assign the fraction when tumorous label is present, and 1 when non-present
 weight_list = np.copy(target_list).astype(np.float16)
