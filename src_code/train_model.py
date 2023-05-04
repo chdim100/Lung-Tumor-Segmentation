@@ -56,7 +56,7 @@ weight_list[weight_list==0]=1
 sampler = torch.utils.data.sampler.WeightedRandomSampler(weight_list, len(weight_list))  
 
 #### Create the train and val_loaders. 
-batch_size=16
+batch_size=8 ##### large batch sizes would probably cause memoryerrors if using mediocre GPUs
 num_workers=4
 #### sampler applied only in training data
 #### we do not use sfuffle with  samplers
@@ -116,10 +116,10 @@ class LungDetector(pl.LightningModule):
         ct, mask= batch
         mask=mask.float()
         pred=self(ct.float())
-        loss=self.loss_fn(pred, mask)
-        print('training loss:',loss)
+        loss=self.loss_fn(pred, mask)      
         self.log('Train Loss', loss)
         if batch_idx%50==0:
+            print('training loss:',loss)
             self.log_images(ct.cpu(), pred.cpu(), mask.cpu(), 'Train')
         return loss
     
@@ -205,6 +205,7 @@ axis[1].imshow(labels[9][0])
 ###### compute the dice score, regarding the model's predictions and tha GT labels
 dice_score = 1-DiceLoss()(torch.from_numpy(preds), torch.from_numpy(labels).unsqueeze(0).float())
 print(f"The Val Dice Score is: {dice_score}")
+###### Dice score expected to 50% since we deal with small tumours
 
 ###### Visualization ######
 ####### Computing a prediction for a patient and visualize the prediction ######
