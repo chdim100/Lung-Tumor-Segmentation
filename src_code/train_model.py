@@ -118,21 +118,35 @@ class LungDetector(pl.LightningModule):
         pred=self(ct.float())
         loss=self.loss_fn(pred, mask)      
         self.log('Train Loss', loss)
-        if batch_idx%50==0:
-            print('training loss:',loss)
+        batch_dictionary={
+           #REQUIRED: It is required to return "loss"
+           "loss": train_loss,
+           "log": self.log,
+        }
+        if batch_idx%100==0:
+            print('training loss:',train_loss)
             self.log_images(ct.cpu(), pred.cpu(), mask.cpu(), 'Train')
-        return loss
+        return batch_dictionary
     
     def validation_step(self, batch, batch_idx):
         ct, mask= batch
         mask=mask.float()
         pred=self(ct.float())
         loss=self.loss_fn(pred,mask)
-        self.log('Val Dice', loss)
-        if batch_idx%2==0:
-            print('validation loss:',loss)
+        self.log('Val Loss', loss)
+         batch_dictionary={
+           #REQUIRED: It ie required for us to return "loss"
+           "loss": val_loss,
+           #optional for batch logging purposes
+           "log": self.log,
+           # info to be used at epoch end 
+           #"correct": correct,
+           #"total": total
+        }
+        if batch_idx%8==0:
+            print('Validation loss:',val_loss)
             self.log_images(ct.cpu(), pred.cpu(), mask.cpu(), 'Val')
-        return loss
+        return batch_dictionary
     
     def log_images(self, ct, pred, mask, name):
         pred=pred>0.5
@@ -171,13 +185,11 @@ trainer.fit(model,train_loader,val_loader)
 #### get the latest one
 
 import os
-CheckpointDict=Path('logs/checkpoints/')
+######### the most recent version
+CheckpointDict=Path('logs/lightning_logs/version_14/checkpoints/')
 list_of_files = CheckpointDict.glob('*.ckpt') # * means all if need specific format then *.csv
 latest_file = max(list_of_files, key=os.path.getctime)
 Path2model=latest_file
-
-#### save
-trainer.save_checkpoint(latest_file)
 
 #### load weights to the model and evaluate
 model=LungDetector.load_from_checkpoint(Path2model,strict=False,map_location=torch.device('cpu'))
