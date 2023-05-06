@@ -1,0 +1,9 @@
+###########--------To open tensorboard during training-------##############
+## Python environment called PytorchCuda
+
+(base)(directory)activate PytorchCuda
+(PytorchCuda)\cd Drive:
+(PytorchCuda)Drive:\cd (Set path to logs)
+(PytorchCuda)(Drive:\path to logs)tensorboard --logdir lightning_logs/
+
+Open localost url in a brower tab and avoid pressing CTRL+C, because it will terminate the connection.
