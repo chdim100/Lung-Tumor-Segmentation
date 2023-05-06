@@ -211,8 +211,8 @@ labels=np.array(labels)
 
 ###### take a snapshot of predicted vs GT masks
 fig, axis = plt.subplots(1, 2)
-axis[0].imshow(preds[9][0][0])
-axis[1].imshow(labels[9][0])
+axis[0].imshow(preds[56][0][0])
+axis[1].imshow(labels[56][0])
 
 ###### compute the dice score, regarding the model's predictions and tha GT labels
 dice_score = 1-DiceLoss()(torch.from_numpy(preds), torch.from_numpy(labels).unsqueeze(0).float())
@@ -222,28 +222,34 @@ print(f"The Val Dice Score is: {dice_score}")
 ###### Visualization ######
 ####### Computing a prediction for a patient and visualize the prediction ######
 
-subject_datapath=Path('Task06_Lung/imagesTs/lung_087.nii')
+subject_datapath=Path('Task06_Lung/imagesTs/lung_087.nii.gz')
 subject_ct = nib.load(subject_datapath).get_fdata()/3071 #### load data numpy array and standardize it
 subject_ct = subject_ct[:,:,30:-30]  # crop
 ###### resize each slice using OpenCV without employing the mask
+#### we will need a list of each resized slice level
+#### for the animation
 preds = []
-###### and get the model's predictions on each slice of this particular subject
+scans=[]
+###### and get the model's predictions and scan on each slice of this particular subject
 for i in range(subject_ct.shape[-1]):
     slic = subject_ct[:,:,i]
     slic_res=cv2.resize(slic,(256,256))
+    scans.append(slic_res)
     with torch.no_grad():
-        pred = torch.nn.sigmoid(model(torch.tensor(slic_res).unsqueeze(0).unsqueeze(0).float().to(device)))[0][0]
+        pred = torch.sigmoid(model(torch.tensor(slic_res).unsqueeze(0).unsqueeze(0).float().to(device)))[0][0]
         pred = pred > 0.5
     preds.append(pred.cpu())
 
-###### now play the video: scans with masks
+###### now play the video: scans with predicted masks (256x256)
 fig = plt.figure()
 camera = Camera(fig)  # create the camera object from celluloid
 
-for i in range(subject_ct.shape[-1]):
-    plt.imshow(subject_ct[:,:,i], cmap="bone")
+animation_step=1
+for i in range(0,subject_ct.shape[-1],animation_step):
+    plt.imshow(scans[i], cmap="bone")
     mask = np.ma.masked_where(preds[i]==0, preds[i])
     plt.imshow(mask, alpha=0.5, cmap="autumn")
+    plt.title(f'A {num_epochs} epochs prediction for subject 87')
     
     camera.snap()  # Store the current slice
 animation = camera.animate()  # create the animation
