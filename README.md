@@ -1,4 +1,4 @@
-# Lung-Tumor-Segmenation
+# Lung-Tumor-Segmentation
 A Pytorch deep learning project for lung tumor segmentation, based on the Decathlon medical segmentation dataset. 
 
 The medical data utilized is from the Medical Segmentation Decathlon and can be downloaded through the following link: https://drive.google.com/drive/folders/1HqEgzS8BV2c7xYNrZdEAnrHk7osJJ--2
